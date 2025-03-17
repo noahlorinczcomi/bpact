@@ -15,6 +15,7 @@ Please see our preprint for more details about the BPACT method and the results 
 ## Implementation
 Below is an example of how to apply **B**ayesian estimation of **p**olygenic **a**rchitectures for **c**omplex **t**raits for Alzheimer's disease and Lewy body dementia (as an example).
 ```R
+remotes::install_github('noahlorinczcomi/bpact')
 library(bpact)
 # load necessary data
 data(gent.Rho)
