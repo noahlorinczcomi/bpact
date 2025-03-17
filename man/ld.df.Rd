@@ -5,7 +5,7 @@
 \alias{ld.df}
 \title{Gene LD scores}
 \format{
-This dataset is contains allele frequency-weighted sums of gene-specific LD scores, and their squared versions, for 17479 genes spanning th 22 autosomes.
+This dataset contains allele frequency-weighted sums of gene-specific LD scores, and their squared versions, for 17479 genes spanning th 22 autosomes.
 \describe{
 \item{chr}{Chromosome}
 \item{gene}{HGNC gene symbol}
