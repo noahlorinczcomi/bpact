@@ -17,6 +17,7 @@ Below is an example of how to apply **B**ayesian estimation of **p**olygenic **a
 ```R
 remotes::install_github('noahlorinczcomi/bpact')
 library(bpact)
+library(dplyr)
 # load necessary data
 data(gent.Rho)
 data(ld.df)
