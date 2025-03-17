@@ -1,5 +1,5 @@
 ## Overview
-We calculate posterior probabilites *PRP<sub>kt</sub>* that the latent causal indicator *I<sub>t</sub>* for the *t*th trait and *k*th gene takes value 1 using the gene-based test statistic $T_{kt}$, i.e. that the *k*th gene is causal for the *th* trait under the assumed causal model:
+We calculate the posterior probability $PRP_{kt}$ that the latent causal indicator $I_{kt}$ for the *t*th trait and *k*th gene takes value 1 using the gene-based test statistic $T_{kt}$, i.e. that the *k*th gene is causal for the t*th* trait under the assumed causal model:
 
 <p>
 $$
