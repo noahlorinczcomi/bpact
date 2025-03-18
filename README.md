@@ -10,7 +10,9 @@ $$
 The parameters $\delta_t$ and $\tau_t$ define the causal model, and we account for imprecise estimation of their values by integrating over their prior distributions $p_{\tau_t}$ and $p_{\delta_t}$. These prior distributions are parameterized empirically using the Metropolis-Hastings algorithm. The parameter $\delta_t$ is the proportion of non-causal genes for the *t*th trait, and $\tau_t$ is the variance- and LD score-scaled SNP heritability for the *t*th trait contributed by each SNP. Since genes spanning the genome are not generally independent of each other, we apply an iterative composite likelihood approach in which independent sets of genes are randomly selected, in which the model is fitted and across which inference is made.
 
 ## Preprint
-Please see our [preprint](https://github.com/noahlorinczcomi/bpact_analysis/tree/main/manuscript) for more details about the BPACT method and the results of applying it to 32 complex traits.
+Please see our [preprint](https://www.medrxiv.org/content/10.1101/2025.03.17.25324106v1) for more details about the BPACT method and the results of applying it to 32 complex traits.
+
+Lorincz-Comi, N. & Cheng, F. Bayesian estimation of shared polygenicity identifies drug targets and repurposable medicines for human complex diseases, *medRxiv*, doi: https://doi.org/10.1101/2025.03.17.25324106.
 
 ## Implementation
 Below is an example of how to apply **B**ayesian estimation of **p**olygenic **a**rchitectures for **c**omplex **t**raits for Alzheimer's disease and Lewy body dementia (as an example).
