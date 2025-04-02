@@ -404,7 +404,7 @@ compositemh=function(gent.data,ld.df,gent.Rho,gwasn,verbose=TRUE,niter=10,
     blockres=bigsnpr::snp_ldsplit(Rho,
                                   thr_r2=thr_r2,
                                   min_size=min_size,
-                                  max_size=max_size,
+                                  max_size=min(c(nrow(Rho),max_size)),
                                   max_K=max_K,
                                   max_r2=max_r2)
     blocks=unlist(tail(blockres$all_last,1))
@@ -648,7 +648,7 @@ propshared=function(posteriors1,posteriors2,gwasn1,gwasn2,gent.Rho,niter=10,verb
     blockres=bigsnpr::snp_ldsplit(Rho,
                                   thr_r2=thr_r2,
                                   min_size=min_size,
-                                  max_size=max_size,
+                                  max_size=min(c(nrow(Rho),max_size)),
                                   max_K=max_K,
                                   max_r2=max_r2)
     blocks=unlist(tail(blockres$all_last,1))
