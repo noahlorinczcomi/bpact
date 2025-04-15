@@ -64,3 +64,15 @@ adj_shared_genes=shared_count_simex(
   verbose=FALSE
 )
 ```
+
+Below is the image produced by the above SIMEX adjustment, which shows that GWAS sample overlap has no impact on the estimated number of shared genes between Alzheimer's disease and Lewy body dementia.
+<div align="center">
+  <img src="https://github.com/noahlorinczcomi/bpact_analysis/blob/main/AD_LBD_sharing_from_sample_overlap%20copy.png" width="500"/>
+</div>
+
+## Schizophrenia and Bipolar I/II example
+We also show the example below between schizophrenia and Bipolar I/II disorder to illustrate that GWAS sample overlap is not generally negligible.
+<div align="center">
+  <img src="https://github.com/noahlorinczcomi/bpact_analysis/blob/main/SCZ_BIP_sharing_from_sample_overlap_updatedJan24%20copy.png" width="550"/>
+</div>
+
