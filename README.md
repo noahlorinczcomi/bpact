@@ -38,6 +38,7 @@ Here is what the example data ```ad.gent``` and ```lbd.gent```, included with th
 remotes::install_github('noahlorinczcomi/bpact')
 library(bpact)
 library(dplyr)
+library(Matrix)
 
 # load necessary data
 data(gent.Rho)
