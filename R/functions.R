@@ -335,7 +335,7 @@ mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
   data.frame(delta=deltachain,tau=tauchain)
 }
 
-#' This function refines the prior distributions of scaled heritability and the proportion of noncausal independent genes
+#' This function defines the prior distributions of scaled heritability and the proportion of noncausal independent genes
 #'
 #' @param gent.data data frame of full gene-based association test results
 #' @param ld.df data frame of weighted LD scores for all genes in gent.data
