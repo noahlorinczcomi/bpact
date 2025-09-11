@@ -4,20 +4,32 @@
 \alias{posterior_gene}
 \title{This function returns gene-level posterior probabilities of causality for a single trait that do not consider correlation between genes}
 \usage{
-posterior_gene(gent.data, ld.df, gwasn, prior.estimation.list, verbose = TRUE)
+posterior_gene(
+  gent.data,
+  gwasn,
+  prior.estimation.list,
+  ld.df = data(ld.df),
+  gene_id = "gene",
+  chromosome = "chr",
+  position = "mid",
+  pval = "pval",
+  null_mean = "m",
+  null_variance = "gent_sigma2_h0",
+  gamma_shape = "shape",
+  gamma_rate = "rate",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{gent.data}{data frame of full gene-based association test results}
-
-\item{ld.df}{data frame of weighted LD scores for all genes in gent.data}
 
 \item{gwasn}{GWAS sample size}
 
 \item{prior.estimation.list}{direct output of the compositemh function containing information regarding the prior distributions to use in posterior estimation}
 
-\item{verbose}{TRUE if progress should be printed, FALSE otherwise}
+\item{ld.df}{data frame of weighted LD scores for all genes in gent.data}
 
-\item{gent.Rho}{list of matrices. Each matrix in this list corresponds to a chromosome and represents correlations between gene-based association test statistics}
+\item{verbose}{TRUE if progress should be printed, FALSE otherwise}
 }
 \description{
 This function returns gene-level posterior probabilities of causality for a single trait that do not consider correlation between genes

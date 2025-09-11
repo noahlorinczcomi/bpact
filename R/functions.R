@@ -338,32 +338,68 @@ mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
 #' This function defines the prior distributions of scaled heritability and the proportion of noncausal independent genes
 #'
 #' @param gent.data data frame of full gene-based association test results
-#' @param ld.df data frame of weighted LD scores for all genes in gent.data
-#' @param gent.Rho list of matrices. Each matrix in this list corresponds to a chromosome and represents correlations between gene-based association test statistics
 #' @param gwasn GWAS sample size
+#' @param ld.df data frame of weighted LD scores for all genes in gent.data; by default called with data(ld.df)
+#' @param gent.Rho list of matrices. Each matrix in this list corresponds to a chromosome and represents correlations between gene-based association test statistics; by default called by data(gent.Rho) for the European 1000 Genomes population 
+#' @param gene_id Gene identifier (e.g., gene name, HGNC symbol)
+#' @param chromosome Chromosome of the gene
+#' @param position Position of the gene in hg19 coordinates (e.g., TSS, gene midpoint, gene start position)
+#' @param pval P-value of the gene-based test statistic
+#' @param null_mean Null mean of the gene-based test statistic. For an unweighted statistic, this is simply the number of SNPs tested in the gene-specific set
+#' @param null_variance Null variance of the gene-based test statistic. For an unweighted statistic, this is sum(diag(R%*%R)) where R is the LD matrix of SNPs in the gene-specific set
+#' @param gamma_shape Shape parameter of the null (Gamma) distribution in gene-based assocaition testing with GenT
+#' @param gamma_rate Rate parameter of the null (Gamma) distribution in gene-based assocaition testing with GenT
 #' @param verbose TRUE if progress should be printed, FALSE otherwise
 #' @param niter number of iterations for which random sampling of independent genes should be done
-#' @param thr_r2 genes correlated beyond this threshold will be placed in the same block; the thr_r2 argument in bigsnpr::snp_ldsplit
-#' @param min_size the minimum size of blocks of genes; the min_size argument in bigsnpr::snp_ldsplit
-#' @param max_size the maximum size of blocks of genes; the min_size argument in bigsnpr::snp_ldsplit
-#' @param max_K the maximum number of gene blocks; the max_K argument in bigsnpr::snp_ldsplit
-#' @param max_r2 the maximum allowable correlation between genes in separate blocks; the max_r2 argument in bigsnpr::snp_ldsplit
-#' @param ... additional arguments passed to the mh function for prior estimation
+#' @param thr_r2 genes correlated beyond this threshold will be placed in the same block; the \code{thr_r2} argument in \code{bigsnpr::snp_ldsplit}
+#' @param min_size the minimum size of blocks of genes; the \code{min_size} argument in \code{bigsnpr::snp_ldsplit}
+#' @param max_size the maximum size of blocks of genes; the \code{min_size} argument in \code{bigsnpr::snp_ldsplit}
+#' @param max_K the maximum number of gene blocks; the \code{max_K} argument in \code{bigsnpr::snp_ldsplit}
+#' @param max_r2 the maximum allowable correlation between genes in separate blocks; the \code{max_r2} argument in \code{bigsnpr::snp_ldsplit}
+#' @param ... additional arguments passed to the \code{mh()} function for prior estimation
 #' @keywords prior
 #' @export
 #' @examples
 #' compositemh()
-compositemh=function(gent.data,ld.df,gent.Rho,gwasn,verbose=TRUE,niter=10,
-                     thr_r2=0.5,min_size=1,max_size=100,max_K=1e6,max_r2=0.75,...) {
+compositemh=function(
+	gent.data,
+	gwasn,
+	ld.df=data(ld.df),
+	gent.Rho=data(gent.Rho),
+	gene_id='gene',
+	chromosome='chr',
+	position='mid',
+	pval='pval',
+	null_mean='m',
+	null_variance='gent_sigma2_h0',
+	gamma_shape='shape',
+	gamma_rate='rate',
+	verbose=TRUE,
+	niter=10,
+	thr_r2=0.5,
+	min_size=1,
+	max_size=100,
+	max_K=1e6,
+	max_r2=0.75,...) {
+  # clean up data
+  cols=c(gene_id,chromosome,position,pval,null_mean,null_variance,gamma_shape,gamma_rate)
+  gent.data=gent.data %>% 
+  	dplyr::select(any_of(cols)) %>%
+  	dplyr::rename(
+  		gene=!!sym(gene_id),
+  		chr=!!sym(chromosome),
+  		mid=!!sym(position),
+  		pval=!!sym(pvalue),
+  		m=!!sym(null_mean),
+  		gent_sigma2_h0=!!sym(null_variance),
+  		shape=!!sym(gamma_shape),
+  		rate=!!sym(gamma_rate)
+  	) %>%
+  	na.omit() %>%
+  	mutate(pval=ifelse(pval<1e-300,1e-300,pval)) %>%
+  	mutate(gent_test_statistic=qgamma(pval,shape=shape,rate=rate))
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-  # gent.data: GenT summary statistics, these columns assumed:
-  #   - gene (gene symbol)
-  #   - chr (chromsome)
-  #   - mid (gene base pair start/end midpoint)
-  #   - pval (GenT P-value)
-  #   - m (number SNPs used)
-  #   - gent_sigma2_h0 (null variance)
-  #   - gent_test_statistic (GenT test statistic)
+  # gent.data: GenT summary statistics
   # ld.df: LD data frame for genes, these columns assumed:
   #   - chr, gene, m, sumwldscore, sumwld2score (MAF-weighted; see paper)
   # gent.Rho: list of GenT statistic correlation matrices for each chromosome, these names assumed:
@@ -464,25 +500,47 @@ compositemh=function(gent.data,ld.df,gent.Rho,gwasn,verbose=TRUE,niter=10,
 #' This function returns gene-level posterior probabilities of causality for a single trait that do not consider correlation between genes
 #'
 #' @param gent.data data frame of full gene-based association test results
-#' @param ld.df data frame of weighted LD scores for all genes in gent.data
-#' @param gent.Rho list of matrices. Each matrix in this list corresponds to a chromosome and represents correlations between gene-based association test statistics
 #' @param gwasn GWAS sample size
 #' @param prior.estimation.list direct output of the compositemh function containing information regarding the prior distributions to use in posterior estimation
+#' @param ld.df data frame of weighted LD scores for all genes in gent.data
 #' @param verbose TRUE if progress should be printed, FALSE otherwise
 #' @keywords posterior
 #' @export
 #' @examples
 #' posterior_gene()
-posterior_gene=function(gent.data,ld.df,gwasn,prior.estimation.list,verbose=TRUE) {
+posterior_gene=function(
+	gent.data,
+	gwasn,
+	prior.estimation.list,
+	ld.df=data(ld.df),
+	gene_id='gene',
+	chromosome='chr',
+	position='mid',
+	pval='pval',
+	null_mean='m',
+	null_variance='gent_sigma2_h0',
+	gamma_shape='shape',
+	gamma_rate='rate',
+	verbose=TRUE) {
+	# clean up data
+	cols=c(gene_id,chromosome,position,pval,null_mean,null_variance,gamma_shape,gamma_rate)
+	gent.data=gent.data %>% 
+		dplyr::select(any_of(cols)) %>%
+		dplyr::rename(
+			gene=!!sym(gene_id),
+			chr=!!sym(chromosome),
+			mid=!!sym(position),
+			pval=!!sym(pvalue),
+			m=!!sym(null_mean),
+			gent_sigma2_h0=!!sym(null_variance),
+			shape=!!sym(gamma_shape),
+			rate=!!sym(gamma_rate)
+		) %>%
+		na.omit() %>%
+		mutate(pval=ifelse(pval<1e-300,1e-300,pval)) %>%
+		mutate(gent_test_statistic=qgamma(pval,shape=shape,rate=rate))
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # gent.data: GenT summary statistics, these columns assumed:
-  #   - gene (gene symbol)
-  #   - chr (chromsome)
-  #   - mid (gene base pair start/end midpoint)
-  #   - pval (GenT P-value)
-  #   - m (number SNPs used)
-  #   - gent_sigma2_h0 (null variance)
-  #   - gent_test_statistic (GenT test statistic)
   # ld.df: LD data frame for genes, these columns assumed:
   #   - chr, gene, m, sumwldscore, sumwld2score (MAF-weighted; see paper)
   # gwasn: GWAS sample size
