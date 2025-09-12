@@ -636,7 +636,6 @@ posterior_gene=function(
     # select row of prior distribution parameters
     phi=toadd %>% filter(chr==paste0('chr',chrs[cc]))
     for(i in 1:nrow(gentres_chr)) {
-      if(verbose & i%%round(nrow(gentres_chr)*0.1)==0) cat(' ',round(i/nrow(gentres_chr)*100),'% complete\n',sep='')
       # conditional marginal density (integrate over delta and tau)
       prob=pracma::quad2d(f,
                           xa=0, # lower bound of first integration
