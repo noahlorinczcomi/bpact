@@ -2,13 +2,21 @@
 % Please edit documentation in R/functions.R
 \name{compositemh}
 \alias{compositemh}
-\title{This function refines the prior distributions of scaled heritability and the proportion of noncausal independent genes}
+\title{This function defines the prior distributions of scaled heritability and the proportion of noncausal independent genes}
 \usage{
 compositemh(
   gent.data,
-  ld.df,
-  gent.Rho,
   gwasn,
+  ld.df = data(ld.df),
+  gent.Rho = data(gent.Rho),
+  gene_id = "gene",
+  chromosome = "chr",
+  position = "mid",
+  pval = "pval",
+  null_mean = "m",
+  null_variance = "gent_sigma2_h0",
+  gamma_shape = "shape",
+  gamma_rate = "rate",
   verbose = TRUE,
   niter = 10,
   thr_r2 = 0.5,
@@ -22,30 +30,46 @@ compositemh(
 \arguments{
 \item{gent.data}{data frame of full gene-based association test results}
 
-\item{ld.df}{data frame of weighted LD scores for all genes in gent.data}
-
-\item{gent.Rho}{list of matrices. Each matrix in this list corresponds to a chromosome and represents correlations between gene-based association test statistics}
-
 \item{gwasn}{GWAS sample size}
+
+\item{ld.df}{data frame of weighted LD scores for all genes in gent.data; by default called with data(ld.df)}
+
+\item{gent.Rho}{list of matrices. Each matrix in this list corresponds to a chromosome and represents correlations between gene-based association test statistics; by default called by data(gent.Rho) for the European 1000 Genomes population}
+
+\item{gene_id}{Gene identifier (e.g., gene name, HGNC symbol)}
+
+\item{chromosome}{Chromosome of the gene}
+
+\item{position}{Position of the gene in hg19 coordinates (e.g., TSS, gene midpoint, gene start position)}
+
+\item{pval}{P-value of the gene-based test statistic}
+
+\item{null_mean}{Null mean of the gene-based test statistic. For an unweighted statistic, this is simply the number of SNPs tested in the gene-specific set}
+
+\item{null_variance}{Null variance of the gene-based test statistic. For an unweighted statistic, this is sum(diag(R\%*\%R)) where R is the LD matrix of SNPs in the gene-specific set}
+
+\item{gamma_shape}{Shape parameter of the null (Gamma) distribution in gene-based assocaition testing with GenT}
+
+\item{gamma_rate}{Rate parameter of the null (Gamma) distribution in gene-based assocaition testing with GenT}
 
 \item{verbose}{TRUE if progress should be printed, FALSE otherwise}
 
 \item{niter}{number of iterations for which random sampling of independent genes should be done}
 
-\item{thr_r2}{genes correlated beyond this threshold will be placed in the same block; the thr_r2 argument in bigsnpr::snp_ldsplit}
+\item{thr_r2}{genes correlated beyond this threshold will be placed in the same block; the \code{thr_r2} argument in \code{bigsnpr::snp_ldsplit}}
 
-\item{min_size}{the minimum size of blocks of genes; the min_size argument in bigsnpr::snp_ldsplit}
+\item{min_size}{the minimum size of blocks of genes; the \code{min_size} argument in \code{bigsnpr::snp_ldsplit}}
 
-\item{max_size}{the maximum size of blocks of genes; the min_size argument in bigsnpr::snp_ldsplit}
+\item{max_size}{the maximum size of blocks of genes; the \code{min_size} argument in \code{bigsnpr::snp_ldsplit}}
 
-\item{max_K}{the maximum number of gene blocks; the max_K argument in bigsnpr::snp_ldsplit}
+\item{max_K}{the maximum number of gene blocks; the \code{max_K} argument in \code{bigsnpr::snp_ldsplit}}
 
-\item{max_r2}{the maximum allowable correlation between genes in separate blocks; the max_r2 argument in bigsnpr::snp_ldsplit}
+\item{max_r2}{the maximum allowable correlation between genes in separate blocks; the \code{max_r2} argument in \code{bigsnpr::snp_ldsplit}}
 
-\item{...}{additional arguments passed to the mh function for prior estimation}
+\item{...}{additional arguments passed to the \code{mh()} function for prior estimation}
 }
 \description{
-This function refines the prior distributions of scaled heritability and the proportion of noncausal independent genes
+This function defines the prior distributions of scaled heritability and the proportion of noncausal independent genes
 }
 \examples{
 compositemh()
