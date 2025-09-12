@@ -364,8 +364,8 @@ mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
 compositemh=function(
 	gent.data,
 	gwasn,
-	ld.df=NULL,
-	gent.Rho=NULL,
+	ld.df,
+	gent.Rho,
 	gene_id='gene',
 	chromosome='chr',
 	position='mid',
@@ -381,9 +381,6 @@ compositemh=function(
 	max_size=100,
 	max_K=1e6,
 	max_r2=0.75,...) {
-  # load default data if user didn't provide any
-  if(is.null(ld.df)) data(ld.df)
-  if(is.null(gent.Rho)) data(gent.Rho)
   # clean up data
   cols=c(gene_id,chromosome,position,pval,null_mean,null_variance,gamma_shape,gamma_rate)
   gent.data=gent.data %>% 
@@ -515,7 +512,7 @@ posterior_gene=function(
 	gent.data,
 	gwasn,
 	prior.estimation.list,
-	ld.df=NULL,
+	ld.df,
 	gene_id='gene',
 	chromosome='chr',
 	position='mid',
@@ -525,8 +522,6 @@ posterior_gene=function(
 	gamma_shape='shape',
 	gamma_rate='rate',
 	verbose=TRUE) {
-	# load reference data if user did not provide any
-	if(is.null(ld.df)) data(ld.df)
 	# clean up data
 	cols=c(gene_id,chromosome,position,pval,null_mean,null_variance,gamma_shape,gamma_rate)
 	gent.data=gent.data %>% 
