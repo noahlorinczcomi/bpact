@@ -21,6 +21,25 @@ Here is a flowchart showing where the data that BPACT requires comes from:
   <img src="https://github.com/noahlorinczcomi/bpact/blob/main/flowchart.png" width="1000"/>
 </div>
 
+## Installation
+### Directly from Github
+The ```bpact``` R package relies on ```bigsnpr``` which relies on ```bigstatsr```. The latter two packages can make ```bpact``` challenging to install on some machines, so if running
+```
+remotes::install_github('noahlorinczcomi/bpact')
+```
+does not successfully install ```bpact``` for you because of complier errors related to ```bigsnpr``` and/or ```bigstatsr```, you can try to first install ```bigsnpr``` and ```bigstatsr``` using conda. 
+
+### Using conda
+Our experience is that you will have a greater likelihood of successfully installing ```bpact``` accross systems if you use conda. To do this, you can run the following at the command line:
+```
+conda install -c conda-forge r-base r-bigstatsr r-bigsnpr
+Rscript -e "remotes::install_github('noahlorinczcomi/bpact')"
+```
+This should install ```bpact```, after which you can simply run:
+```
+library(bpact)
+```
+
 ## Formatting data
 ```bpact``` requires genome-wide gene-based association test statistics to be in a data frame which has the following columns present:
   - ```gene```: Any gene-specific identifier (e.g., HGNC symbol)
