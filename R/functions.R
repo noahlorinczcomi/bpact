@@ -210,7 +210,7 @@ mom_trap_distribution=function(taus,a,b) {
     eg$mean[i]=ex
     eg$variance[i]=vx
   }
-  EV=matrix(c(mean(taus),var(taus)),nr=nrow(eg),nc=2,byrow=TRUE)
+  EV=matrix(c(mean(taus),var(taus)),nrow=nrow(eg),ncol=2,byrow=TRUE)
   ix=as.matrix(eg[,c('mean','variance')])
   ix=(EV[,1]-ix[,1])^2+(EV[,2]-ix[,2])^2
   egdf=eg[which.min(ix),c('x1','x2')]
@@ -549,14 +549,14 @@ posterior_gene=function(
   for(o in 1:length(chrs)) DELTAS[[o]]=prior.estimation.list$fullres[[o]]$mh_deltares
   names(DELTAS)=chrs
   mom_delta=lapply(DELTAS,function(h) mom_beta_distribution(c(h)))
-  mom_delta=matrix(unlist(mom_delta),nc=2,byrow=T)
+  mom_delta=matrix(unlist(mom_delta),ncol=2,byrow=T)
   rownames(mom_delta)=chrs
   ## taus (chromosome-specific)
   TAUS=list()
   for(o in 1:length(chrs)) TAUS[[o]]=prior.estimation.list$fullres[[o]]$mh_taures
   names(TAUS)=chrs
   mom_tau=lapply(TAUS,function(h) numerical_trap_distribution(c(h),subn=1e5,atrim=0,btrim=0.975,doplot=FALSE))
-  mom_tau=matrix(unlist(mom_tau),nc=6,byrow=T)
+  mom_tau=matrix(unlist(mom_tau),ncol=6,byrow=T)
   rownames(mom_tau)=chrs
   ## store
   toadd=data.frame(
@@ -850,7 +850,7 @@ shared_count_simex=function(
   simres=function(overlap_corr,verbose.=verbose) {
     SigmaOverlap=matrix(c(1,overlap_corr,overlap_corr,1),2,2) # sample overlap correlation matrix
     K=kronecker(SigmaOverlap,R) # variance-covariance matrix of Z-stats for each trait and gene
-    RES1=RES2=matrix(nr=niter,nc=M) # store results in these
+    RES1=RES2=matrix(nrow=niter,ncol=M) # store results in these
     for(i in 1:M) {
       Z1=Z2=rep(0,m)
       if(i %in% ix1) Z1[causalsnpix]=sqrt(ngwas1*h21/mcausalsnps1)
@@ -880,7 +880,7 @@ shared_count_simex=function(
   }
   # perform SIMEX
   corrs=seq(upsilon_overlap,sign(upsilon_overlap)*0.99,length.out=nlambdas)
-  RESI=matrix(nr=niter,nc=length(corrs))
+  RESI=matrix(nrow=niter,ncol=length(corrs))
   for(i in 1:length(corrs)) {
     if(verbose) cat(i,'\n')
     RESI[,i]=simres(corrs[i],verbose.=verbose)

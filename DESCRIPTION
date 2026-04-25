@@ -3,6 +3,8 @@ Title: Estimation of Shared Polygenicity Between Trait Pairs
 Version: 0.0.0.9000
 Imports:
     dplyr,
+    rlang,
+    methods,
     bigsnpr,
     Matrix,
     mvnfast,
