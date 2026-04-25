@@ -6,7 +6,7 @@
 #' @source Genes tested using the 1000 Genomes Phase 3 European reference panel
 #' @examples
 #' data(gent.Rho)
-#' str(my_data)
+#' str(gent.Rho)
 "gent.Rho"
 
 #' Gene LD scores
