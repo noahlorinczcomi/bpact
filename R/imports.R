@@ -4,6 +4,7 @@
 #' @importFrom stats coef dbeta dgamma lm median na.omit optim qgamma quantile rbeta runif toeplitz var
 #' @importFrom graphics abline curve hist legend lines par points
 #' @importFrom methods as
+#' @importClassesFrom Matrix sparseMatrix
 #' @importFrom utils tail
 NULL
 
