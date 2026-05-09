@@ -3,6 +3,8 @@ Title: Estimation of Shared Polygenicity Between Trait Pairs
 Version: 0.0.0.9000
 Imports:
     dplyr,
+    rlang,
+    methods,
     bigsnpr,
     Matrix,
     mvnfast,
@@ -10,8 +12,7 @@ Imports:
 Authors@R: 
     person("Noah", "Lorincz-Comi", , "lorincn@ccf.org", role = c("aut", "cre"), comment=c(ORCID="0000-0002-0517-2499"))
 Description: This package can be used to calculate posterior probabilities that a gene-specific set of SNPs contains a causal SNP under a model of polygenicity that is adjusted for the misspecification of its own parameters.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -10,7 +10,6 @@
 #' @keywords trapezoidal
 #' @export
 #' @examples dtrap(1,0,1,2,3)
-#' dtrap()
 dtrap=function(x,a,x1,x2,b,log=FALSE) {
   # trapezoidal pdf, vectorized version
   y0=2/(b-a-x1+x2)
@@ -33,7 +32,6 @@ dtrap=function(x,a,x1,x2,b,log=FALSE) {
 #' @keywords trapezoidal
 #' @export
 #' @examples ptrap(2,0,1,2,3)
-#' ptrap()
 ptrap=function(x,a,x1,x2,b,log=FALSE) {
   x=sort(x)
   y0=2/(b-a-x1+x2)
@@ -42,7 +40,7 @@ ptrap=function(x,a,x1,x2,b,log=FALSE) {
   int_x1_x2=y0*(x2-x1)
   int_x2_b=1-int_a_x1-int_x1_x2
   # int_{c}^x
-  int_a_x=y0/((2*x1-a))*(x^2-a^2)-a*y0/(x1-a)*(x-a)
+  int_a_x=y0/(2*(x1-a))*(x-a)^2
   int_x1_x=y0*(x-x1)
   int_x2_x=b*y0/(b-x2)*(x-x2)-y0/(2*(b-x2))*(x^2-x2^2)
   res=rep(0,length(x))
@@ -71,7 +69,6 @@ ptrap=function(x,a,x1,x2,b,log=FALSE) {
 #' @keywords trapezoidal
 #' @export
 #' @examples qtrap(0.5,0,1,2,3)
-#' qtrap()
 qtrap=function(p,a,x1,x2,b,eps=1e-5,max_passes=5,n=100) {
   # numerical approach to finding the quantile
   # multiple passes of increasing precision
@@ -102,7 +99,6 @@ qtrap=function(p,a,x1,x2,b,eps=1e-5,max_passes=5,n=100) {
 #' @keywords trapezoidal
 #' @export
 #' @examples rtrap(10,0,1,2,3)
-#' rtrap()
 rtrap=function(n,a,x1,x2,b) {
   y0=2/(b-a-x1+x2)
   x=c()
@@ -128,7 +124,6 @@ rtrap=function(n,a,x1,x2,b) {
 #' @keywords trapezoidal
 #' @export
 #' @examples numerical_trap_distribution(c(1,3,4,5,7))
-#' numerical_trap_distribution()
 numerical_trap_distribution=function(taus,subn=length(taus),atrim=0,btrim=0.975,doplot=FALSE) {
   ## numerical estimation of parameters of trapezoidal distribution
   # actually compare empirical density to theoretical density
@@ -198,7 +193,6 @@ numerical_trap_distribution=function(taus,subn=length(taus),atrim=0,btrim=0.975,
 #' @keywords trapezoidal MoM
 #' @export
 #' @examples mom_trap_distribution(c(1,3,4,5,7),0,8)
-#' numerical_trap_distribution()
 mom_trap_distribution=function(taus,a,b) {
   ## approx. method of moments for trapezoidal distribution
   # a: minimum allowable tau value
@@ -216,9 +210,9 @@ mom_trap_distribution=function(taus,a,b) {
     eg$mean[i]=ex
     eg$variance[i]=vx
   }
-  EV=matrix(c(mean(logtaus),var(logtaus)),nr=nrow(eg),nc=2,byrow=TRUE)
+  EV=matrix(c(mean(taus),var(taus)),nrow=nrow(eg),ncol=2,byrow=TRUE)
   ix=as.matrix(eg[,c('mean','variance')])
-  ix=(EV[,1]-ix[,1]+EV[,2]-ix[,2])^2
+  ix=(EV[,1]-ix[,1])^2+(EV[,2]-ix[,2])^2
   egdf=eg[which.min(ix),c('x1','x2')]
   # hist(taus,pr=T,col='gray90',border='gray90')
   # curve(dtrap(x,a,egdf$x1,egdf$x2,b),min(taus),max(taus),add=T,lty=2)
@@ -232,7 +226,6 @@ mom_trap_distribution=function(taus,a,b) {
 #' @keywords Beta MoM
 #' @export
 #' @examples mom_beta_distribution(c(1,3,4,5,7)/10,1/20)
-#' mom_beta_distribution()
 mom_beta_distribution=function(deltas,var_deltas=NULL) {
   ## method of moments for Beta distribution
   if(is.null(var_deltas)) var_deltas=var(deltas)
@@ -258,7 +251,7 @@ mom_beta_distribution=function(deltas,var_deltas=NULL) {
 #' @keywords prior
 #' @export
 #' @examples
-#' mh()
+#' \dontrun{mh()}
 mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
             chain_length=100000,burnin=100,madj_likelihood=FALSE,
             tau_a=2e-10,tau_x1=2e-9,tau_x2=2e-7,tau_b=2e-4,beta_shape2=1.0001,verbose.=TRUE) {
@@ -275,7 +268,7 @@ mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
   # function to find estimate of alpha in Beta(alpha,~1) given single observation
   myf=function(par,x) -dbeta(x,par,beta_shape2,log=TRUE)
   # likelihood function
-  lf=function(delta,tau,mu0,sigma0,mu1,nk,wldscores,wld2scores,adjm=TRUE) {
+  lf=function(delta,tau,mu0,sigma0,nk,wldscores,wld2scores,adjm=TRUE) {
     beta0=mu0/sigma0
     alpha0=mu0*beta0
     e1=mu0+tau*nk*wldscores
@@ -312,8 +305,8 @@ mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
     d_tau0=dtrap(tau0,tau_a,tau_x1,tau_x2,tau_b,log=TRUE)
     d_tau1=dtrap(tau1,tau_a,tau_x1,tau_x2,tau_b,log=TRUE)
     # likelihood (assumes independence between genes)
-    like0=lf(delta0,tau0,mu0,sigma0,mu1,nk,wldscores,wld2scores,adjm=madj_likelihood)
-    like1=lf(delta1,tau1,mu0,sigma0,mu1,nk,wldscores,wld2scores,adjm=madj_likelihood)
+    like0=lf(delta0,tau0,mu0,sigma0,nk,wldscores,wld2scores,adjm=madj_likelihood)
+    like1=lf(delta1,tau1,mu0,sigma0,nk,wldscores,wld2scores,adjm=madj_likelihood)
     # posterior likelihood ratio
     gam=d_delta1+d_tau1+like1-d_delta0-like0-d_tau0
     # acceptance probability
@@ -360,7 +353,7 @@ mh=function(gentres_chr_ldblock,lddf_chr_ldblock,nk,
 #' @keywords prior
 #' @export
 #' @examples
-#' compositemh()
+#' \dontrun{compositemh()}
 compositemh=function(
 	gent.data,
 	gwasn,
@@ -507,7 +500,7 @@ compositemh=function(
 #' @keywords posterior
 #' @export
 #' @examples
-#' posterior_gene()
+#' \dontrun{posterior_gene()}
 posterior_gene=function(
 	gent.data,
 	gwasn,
@@ -556,14 +549,14 @@ posterior_gene=function(
   for(o in 1:length(chrs)) DELTAS[[o]]=prior.estimation.list$fullres[[o]]$mh_deltares
   names(DELTAS)=chrs
   mom_delta=lapply(DELTAS,function(h) mom_beta_distribution(c(h)))
-  mom_delta=matrix(unlist(mom_delta),nc=2,byrow=T)
+  mom_delta=matrix(unlist(mom_delta),ncol=2,byrow=T)
   rownames(mom_delta)=chrs
   ## taus (chromosome-specific)
   TAUS=list()
-  for(o in 1:22) TAUS[[o]]=prior.estimation.list$fullres[[o]]$mh_taures
+  for(o in 1:length(chrs)) TAUS[[o]]=prior.estimation.list$fullres[[o]]$mh_taures
   names(TAUS)=chrs
   mom_tau=lapply(TAUS,function(h) numerical_trap_distribution(c(h),subn=1e5,atrim=0,btrim=0.975,doplot=FALSE))
-  mom_tau=matrix(unlist(mom_tau),nc=6,byrow=T)
+  mom_tau=matrix(unlist(mom_tau),ncol=6,byrow=T)
   rownames(mom_tau)=chrs
   ## store
   toadd=data.frame(
@@ -650,7 +643,7 @@ posterior_gene=function(
                           nk=gwasn,
                           a=phi$tau_param_hard_a,
                           x1=phi$tau_param_x1,
-                          x2=phi$tau_param_x1,
+                          x2=phi$tau_param_x2,
                           b=phi$tau_param_hard_b,
                           delta_alpha=phi$delta_param1,
                           delta_beta=phi$delta_param2,
@@ -680,12 +673,12 @@ posterior_gene=function(
 #' @keywords shared
 #' @export
 #' @examples
-#' propshared()
+#' \dontrun{propshared()}
 propshared=function(posteriors1,posteriors2,gwasn1,gwasn2,gent.Rho,niter=10,verbose=TRUE,
                     thr_r2=0.5,min_size=1,max_size=30,max_K=1e6,max_r2=0.75) {
   # function to estimate proportion of shared genes for each chromosome and
   probdf=data.frame()
-  chrs=intersect(unique(posteriors1$chr),unique(posteriors1$chr))
+  chrs=intersect(unique(posteriors1$chr),unique(posteriors2$chr))
   chrs=sort(as.numeric(chrs))
   blocks_list=list()
   for(cc in 1:length(chrs)) {
@@ -789,7 +782,7 @@ propshared=function(posteriors1,posteriors2,gwasn1,gwasn2,gent.Rho,niter=10,verb
 #' @keywords SIMEX
 #' @export
 #' @examples
-#' shared_count_simex()
+#' \dontrun{shared_count_simex()}
 shared_count_simex=function(
     M, # number of jointly tested genes
     mcausalgenes1, # estimated number of genes causing trait 1
@@ -832,7 +825,7 @@ shared_count_simex=function(
   mcausalsnps2=mcausalgenes2*mcausal_snps_per_gene # total number of causal trait 2 SNPs
   R=diag(m)
   if(tolower(LD_type)=='ar') R=LD_rho^toeplitz(0:(m-1))
-  if(tolower(LD_type)=='cs') R=cs(LD_rho)
+  if(tolower(LD_type)=='cs') R=cs(m,LD_rho)
   Z0_1=rep(0,m); Z0_1[causalsnpix]=sqrt(ngwas1*h21/mcausalsnps1) # true Z-stats for trait 1 for each causal gene
   Z0_2=rep(0,m); Z0_2[causalsnpix]=sqrt(ngwas2*h22/mcausalsnps2) # true Z-stats for trait 2 for each causal gene
   # moments of null and non-null test statistic distributions
@@ -857,7 +850,7 @@ shared_count_simex=function(
   simres=function(overlap_corr,verbose.=verbose) {
     SigmaOverlap=matrix(c(1,overlap_corr,overlap_corr,1),2,2) # sample overlap correlation matrix
     K=kronecker(SigmaOverlap,R) # variance-covariance matrix of Z-stats for each trait and gene
-    RES1=RES2=matrix(nr=niter,nc=M) # store results in these
+    RES1=RES2=matrix(nrow=niter,ncol=M) # store results in these
     for(i in 1:M) {
       Z1=Z2=rep(0,m)
       if(i %in% ix1) Z1[causalsnpix]=sqrt(ngwas1*h21/mcausalsnps1)
@@ -887,7 +880,7 @@ shared_count_simex=function(
   }
   # perform SIMEX
   corrs=seq(upsilon_overlap,sign(upsilon_overlap)*0.99,length.out=nlambdas)
-  RESI=matrix(nr=niter,nc=length(corrs))
+  RESI=matrix(nrow=niter,ncol=length(corrs))
   for(i in 1:length(corrs)) {
     if(verbose) cat(i,'\n')
     RESI[,i]=simres(corrs[i],verbose.=verbose)
