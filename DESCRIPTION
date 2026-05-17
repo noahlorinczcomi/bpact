@@ -1,6 +1,6 @@
 Package: bpact
 Title: Estimation of Shared Polygenicity Between Trait Pairs
-Version: 0.0.0.9000
+Version: 0.0.1
 Imports:
     dplyr,
     rlang,
