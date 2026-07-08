@@ -1,0 +1,14 @@
+output:
+  file:                         # Prefix to the output file (w/o extension; will be .csv)
+
+gene_gene_corrs:
+  dir: data/gene_gene_corrs     # Dir containing chromosome-specific files of gene-gene correlations.
+  # See `data/gene_gene_corrs` for a proper example of the dir, file, and dataset structure
+
+gene_was:
+  file:                         # Path to GWAS sumstats
+  chromosome:                   # Column name indicating gene chromosome
+  start_position:               # Column name indicating gene start position
+  null_mean:                    # Mean of the gene-based test statistic under H0
+  null_variance:                # Variance of the gene-based test statistic under H0
+  pvalue:                       # Observed (test) P-value
