@@ -1,3 +1,27 @@
+
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=17&pause=1000&color=0BB600&width=700&lines=bpact%3A+Bayesian+estimation+of+polygenic+architecture)](https://git.io/typing-svg)
+
+### Tl;DR
+
+```R
+library(bpact)
+
+data(ad.gent)  # Alzheimer's disease (AD) GenT results
+data(lbd.gent) # Lewy body dementia (LBD) GenT results
+data(gent.Rho) # Matrix of correlations between GenT statistics
+
+# Alzheimer's disease posterior probabilities
+ad_priors=compositemh(ad.gent, ld.df, gent.Rho, 480000, chain_length=1000)
+ad_posteriors=posterior_gene(ad.gent, ld.df, 480000, ad_priors)
+
+# Lewy body dementia posterior probabilities
+lbd_priors=compositemh(lbd.gent, ld.df, gent.Rho, 16516, chain_length=1000)
+lbd_posteriors=posterior_gene(lbd.gent, ld.df, 16516, lbd_priors)
+
+# Estimate number of shared associated genes between AD and LBD
+shared_genes=propshared(ad_posteriors, lbd_posteriors, 480000, 16516, gent.Rho)
+```
+
 # Overview
 We calculate the posterior probability $PRP_{kt}$ that the latent causal indicator $I_{kt}$ for the *t*th trait and *k*th gene takes value 1 using the gene-based test statistic $T_{kt}$, i.e. that the *k*th gene is causal for the t*th* trait under the assumed causal model:
 
